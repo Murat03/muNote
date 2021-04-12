@@ -43,6 +43,14 @@ public class ChronometerActivity extends AppCompatActivity {
         runnable = new Runnable() {
             @Override
             public void run() {
+                if(second == 60){
+                    second = 0;
+                    minute++;
+                }
+                if(minute == 60){
+                    minute = 0;
+                    hour++;
+                }
                 if (second < 10 && minute == 0 && hour == 0) {
                     textView.setText("00:00:0" + second);
                 }else if (minute == 0 && hour == 0){
@@ -73,14 +81,6 @@ public class ChronometerActivity extends AppCompatActivity {
                     textView.setText(hour + ":" + minute + ":" + second);
                 }
                 second++;
-                if(second == 60){
-                    second = 0;
-                    minute++;
-                }
-                if(minute == 60){
-                    minute = 0;
-                    hour++;
-                }
                 if(hour == 100){
                     handler.removeCallbacks(runnable);
                     textView.setText("This Is the End");
@@ -102,12 +102,11 @@ public class ChronometerActivity extends AppCompatActivity {
         second = 0;
         minute = 0;
         hour = 0;
-        number = 0;
         textView.setText("00:00:00");
     }
     public void limit(View view) {
             if(editNumber.getText().toString().matches("")){
-                Toast.makeText(getApplicationContext(), "s", Toast.LENGTH_LONG).show();
+                number = 0;
             }else{
                 number = Integer.parseInt(editNumber.getText().toString());
             }
