@@ -10,15 +10,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ChronometerActivity extends AppCompatActivity {
 
     TextView textView;
     Button startButton;
-    EditText editText;
+    EditText editNumber;
     int second;
     int minute;
     int hour;
+    int number;
     Runnable runnable;
     Handler handler;
 
@@ -28,10 +30,12 @@ public class ChronometerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chronometer);
 
         textView = findViewById(R.id.textView);
+        editNumber = findViewById(R.id.editNumber);
         startButton = findViewById(R.id.startButton);
         second = 0;
         minute = 0;
         hour = 0;
+        number = 0;
     }
     public void start(View view){
         handler = new Handler(Looper.getMainLooper());
@@ -39,7 +43,6 @@ public class ChronometerActivity extends AppCompatActivity {
         runnable = new Runnable() {
             @Override
             public void run() {
-
                 if (second < 10 && minute == 0 && hour == 0) {
                     textView.setText("00:00:0" + second);
                 }else if (minute == 0 && hour == 0){
@@ -78,11 +81,17 @@ public class ChronometerActivity extends AppCompatActivity {
                     minute = 0;
                     hour++;
                 }
-                if(hour == 99){
-                    textView.setText("This Is the End");
+                if(hour == 100){
                     handler.removeCallbacks(runnable);
+                    textView.setText("This Is the End");
+                }else {
+                    if(number != 0 && number/60 == hour && number%60 == minute){
+                        handler.removeCallbacks(runnable);
+                        textView.setText("This Is the End");
+                    }else{
+                        handler.postDelayed(runnable, 1000);
+                    }
                 }
-                handler.postDelayed(runnable, 1000);
             }
         };
         handler.post(runnable);
@@ -93,9 +102,14 @@ public class ChronometerActivity extends AppCompatActivity {
         second = 0;
         minute = 0;
         hour = 0;
+        number = 0;
         textView.setText("00:00:00");
     }
-    public void limit(View view){
-
+    public void limit(View view) {
+            if(editNumber.getText().toString().matches("")){
+                Toast.makeText(getApplicationContext(), "s", Toast.LENGTH_LONG).show();
+            }else{
+                number = Integer.parseInt(editNumber.getText().toString());
+            }
     }
 }

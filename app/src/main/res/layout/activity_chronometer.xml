@@ -11,11 +11,11 @@
         android:layout_width="205dp"
         android:layout_height="0dp"
         android:layout_marginTop="129dp"
-        android:layout_marginBottom="53dp"
+        android:layout_marginBottom="52dp"
         android:text="00:00:00"
         android:textAlignment="center"
         android:textSize="48sp"
-        app:layout_constraintBottom_toTopOf="@+id/startButton"
+        app:layout_constraintBottom_toTopOf="@+id/stopButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,46 +25,47 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="29dp"
-        android:layout_marginBottom="41dp"
         android:onClick="start"
         android:text="Start"
-        app:layout_constraintBottom_toTopOf="@+id/editText"
+        app:layout_constraintBaseline_toBaselineOf="@+id/stopButton"
         app:layout_constraintEnd_toStartOf="@+id/stopButton"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/stopButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="38dp"
         android:onClick="stop"
         android:text="Stop"
-        app:layout_constraintBaseline_toBaselineOf="@+id/startButton"
+        app:layout_constraintBottom_toTopOf="@+id/editNumber"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/startButton" />
-
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="27dp"
-        android:ems="10"
-        android:hint="Enter the minute"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/limit"
-        app:layout_constraintStart_toStartOf="@+id/startButton"
-        app:layout_constraintTop_toBottomOf="@+id/startButton" />
+        app:layout_constraintStart_toEndOf="@+id/startButton"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <Button
         android:id="@+id/limit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="145dp"
+        android:layout_marginBottom="146dp"
         android:onClick="limit"
         android:text="LIMIT"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/editNumber" />
+
+    <EditText
+        android:id="@+id/editNumber"
+        android:layout_width="205dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="31dp"
+        android:ems="10"
+        android:hint="Enter the minute limit"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@+id/limit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stopButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>
