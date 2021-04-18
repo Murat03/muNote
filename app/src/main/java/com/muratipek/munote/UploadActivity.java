@@ -50,6 +50,7 @@ public class UploadActivity extends AppCompatActivity {
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
     Uri imageData;
+    String downloadUrl = "asd";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,43 +69,18 @@ public class UploadActivity extends AppCompatActivity {
         UUID uuid = UUID.randomUUID();
         String imageName = "images/" + uuid + ".jpg";
 
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        String userEmail = firebaseUser.getEmail();
+
         if(imageData != null){
             storageReference.child(imageName).putFile(imageData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
                     StorageReference storageReference = firebaseStorage.getInstance().getReference(imageName);
                     storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
                             String downloadUrl = uri.toString();
-
-                            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                            String userEmail = firebaseUser.getEmail();
-
-                            String title = titleText.getText().toString();
-                            String note = noteText.getText().toString();
-
-                            HashMap<String, Object> noteData = new HashMap<>();
-                            noteData.put("useremail", userEmail);
-                            noteData.put("title", title);
-                            noteData.put("note", note);
-                            noteData.put("downloadurl", downloadUrl);
-                            noteData.put("date", FieldValue.serverTimestamp());
-
-                            firebaseFirestore.collection("Notes").add(noteData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    Intent intent = new Intent(UploadActivity.this, MainActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(intent);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(UploadActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
-                                }
-                            });
                         }
                     });
                 }
@@ -115,7 +91,28 @@ public class UploadActivity extends AppCompatActivity {
                 }
             });
         }
+        String title = titleText.getText().toString();
+        String note = noteText.getText().toString();
 
+        HashMap<String, Object> noteData = new HashMap<>();
+        noteData.put("useremail", userEmail);
+        noteData.put("title", title);
+        noteData.put("note", note);
+        noteData.put("date", FieldValue.serverTimestamp());
+        noteData.put("downloadurl", downloadUrl);
+        firebaseFirestore.collection("Notes").add(noteData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                Intent intent = new Intent(UploadActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(UploadActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                System.out.println(e.getLocalizedMessage());
+            }
+        });
     }
     public void selectImage(View view){
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
