@@ -36,10 +36,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
-import io.grpc.Context;
-import io.grpc.internal.FailingClientStream;
-
-public class UploadActivity extends AppCompatActivity {
+public class NoteActivity extends AppCompatActivity {
 
     Bitmap selectedImage;
     ImageView selectImage;
@@ -50,12 +47,12 @@ public class UploadActivity extends AppCompatActivity {
     private FirebaseFirestore firebaseFirestore;
     private FirebaseAuth firebaseAuth;
     Uri imageData;
-    String downloadUrl = "asd";
+    String downloadUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_upload);
+        setContentView(R.layout.activity_note);
         selectImage = findViewById(R.id.selectImage);
         titleText = findViewById(R.id.titleText);
         noteText = findViewById(R.id.noteText);
@@ -64,6 +61,8 @@ public class UploadActivity extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
     }
+
+    //Button
     public void addNoteButton(View view){
 
         UUID uuid = UUID.randomUUID();
@@ -80,14 +79,14 @@ public class UploadActivity extends AppCompatActivity {
                     storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            String downloadUrl = uri.toString();
+                            downloadUrl = uri.toString();
                         }
                     });
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(UploadActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -103,17 +102,18 @@ public class UploadActivity extends AppCompatActivity {
         firebaseFirestore.collection("Notes").add(noteData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
-                Intent intent = new Intent(UploadActivity.this, MainActivity.class);
+                Intent intent = new Intent(NoteActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(UploadActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
                 System.out.println(e.getLocalizedMessage());
             }
         });
     }
+
     public void selectImage(View view){
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -123,16 +123,15 @@ public class UploadActivity extends AppCompatActivity {
         }
     }
 
+    //
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
         if(requestCode == 1){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 Intent intentToGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intentToGallery, 2);
             }
         }
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
@@ -155,7 +154,6 @@ public class UploadActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 }

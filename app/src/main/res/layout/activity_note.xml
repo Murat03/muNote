@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NoteActivity">
+
+
+    <EditText
+        android:id="@+id/noteText"
+        android:layout_width="340dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/note_shape"
+        android:ems="10"
+        android:gravity="top|left"
+        android:hint="Enter note"
+        android:inputType="textMultiLine"
+        android:maxLines="15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleText" />
+
+    <EditText
+        android:id="@+id/titleText"
+        android:layout_width="340dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:hint="Enter title"
+        android:inputType="textPersonName"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/addNoteButton"
+        android:layout_width="191dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="15dp"
+        android:onClick="addNoteButton"
+        android:text="Add Note"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gridLayout" />
+
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="340dp"
+        android:layout_height="115dp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/noteText">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="150dp"
+            android:layout_height="115dp"
+            app:layout_column="0"
+            app:layout_row="0"
+            app:srcCompat="@drawable/ic_launcher_background" />
+
+        <ImageView
+            android:id="@+id/selectImage"
+            android:layout_width="150dp"
+            android:layout_height="115dp"
+            android:layout_marginLeft="40dp"
+            android:onClick="selectImage"
+            app:layout_column="1"
+            app:layout_row="0"
+            app:srcCompat="@drawable/select" />
+    </androidx.gridlayout.widget.GridLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

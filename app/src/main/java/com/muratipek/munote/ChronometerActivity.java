@@ -87,7 +87,7 @@ public class ChronometerActivity extends AppCompatActivity {
                 }else {
                     if(number != 0 && number/60 == hour && number%60 == minute){
                         handler.removeCallbacks(runnable);
-                        textView.setText("This Is the End");
+                        textView.setText("Time Over");
                     }else{
                         handler.postDelayed(runnable, 1000);
                     }

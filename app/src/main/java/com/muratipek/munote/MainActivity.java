@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if(item.getItemId() == R.id.upload){
-            Intent intentToUpload = new Intent(MainActivity.this, UploadActivity.class);
+            Intent intentToUpload = new Intent(MainActivity.this, NoteActivity.class);
             startActivity(intentToUpload);
         }else if(item.getItemId() == R.id.chronometer){
             Intent intentToChronometer = new Intent(MainActivity.this, ChronometerActivity.class);

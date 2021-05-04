@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MuNote">
         <activity android:name=".ChronometerActivity"></activity>
-        <activity android:name=".UploadActivity" />
+        <activity android:name=".NoteActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".SignInUpActivity">
             <intent-filter>

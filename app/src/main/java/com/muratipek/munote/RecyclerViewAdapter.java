@@ -31,6 +31,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(@NonNull RowHolder holder, int position) {
         holder.bind(noteList.get(position), colors, position);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                
+            }
+        });
     }
 
     @Override
@@ -41,6 +48,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView textTitle;
         public RowHolder(@NonNull View itemView) {
             super(itemView);
+
+
         }
         public void bind(String title, String[] colors, Integer position){
             itemView.setBackgroundColor(Color.parseColor(colors[position%5]));
