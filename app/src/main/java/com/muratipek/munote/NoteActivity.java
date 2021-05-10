@@ -21,19 +21,25 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class NoteActivity extends AppCompatActivity {
@@ -48,18 +54,51 @@ public class NoteActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     Uri imageData;
     String downloadUrl;
+    String selectedTitle, selectedNote, selectedUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
+
         selectImage = findViewById(R.id.selectImage);
         titleText = findViewById(R.id.titleText);
         noteText = findViewById(R.id.noteText);
+
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
+
+        noteSelected();
+    }
+
+    //When Note is Selected
+    public void noteSelected(){
+        Intent intent = getIntent();
+        selectedTitle = intent.getStringExtra("title");
+
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        String userEmail = firebaseUser.getEmail();
+
+        //from docs
+        firebaseFirestore.collection("Notes").whereEqualTo("useremail", userEmail)
+                .whereEqualTo("title", selectedTitle).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Map<String, Object> data = document.getData();
+
+                        titleText.setText(selectedTitle);
+                        noteText.setText((String) data.get("note"));
+                        if((String) data.get("downloadurl") != null){
+                            Picasso.get().load((String) data.get("downloadurl")).into(selectImage);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     //Button
@@ -70,48 +109,73 @@ public class NoteActivity extends AppCompatActivity {
 
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         String userEmail = firebaseUser.getEmail();
-
-        if(imageData != null){
-            storageReference.child(imageName).putFile(imageData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    StorageReference storageReference = firebaseStorage.getInstance().getReference(imageName);
-                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            downloadUrl = uri.toString();
-                        }
-                    });
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-        String title = titleText.getText().toString();
-        String note = noteText.getText().toString();
-
         HashMap<String, Object> noteData = new HashMap<>();
-        noteData.put("useremail", userEmail);
-        noteData.put("title", title);
-        noteData.put("note", note);
-        noteData.put("date", FieldValue.serverTimestamp());
-        noteData.put("downloadurl", downloadUrl);
-        firebaseFirestore.collection("Notes").add(noteData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Intent intent = new Intent(NoteActivity.this, MainActivity.class);
-                startActivity(intent);
+            if (imageData != null) {
+                storageReference.child(imageName).putFile(imageData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        StorageReference storageReference = firebaseStorage.getInstance().getReference(imageName);
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                downloadUrl = uri.toString();
+
+                                String title = titleText.getText().toString();
+                                String note = noteText.getText().toString();
+
+                                noteData.put("useremail", userEmail);
+                                noteData.put("title", title);
+                                noteData.put("note", note);
+                                noteData.put("date", FieldValue.serverTimestamp());
+                                noteData.put("downloadurl", downloadUrl);
+
+                                firebaseFirestore.collection("Notes").add(noteData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        Intent intent = new Intent(NoteActivity.this, MainActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                                        System.out.println(e.getLocalizedMessage());
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            } else {
+                String title = titleText.getText().toString();
+                String note = noteText.getText().toString();
+
+                noteData.put("useremail", userEmail);
+                noteData.put("title", title);
+                noteData.put("note", note);
+                noteData.put("date", FieldValue.serverTimestamp());
+
+                firebaseFirestore.collection("Notes").add(noteData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Intent intent = new Intent(NoteActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                        System.out.println(e.getLocalizedMessage());
+                    }
+                });
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
-                System.out.println(e.getLocalizedMessage());
-            }
-        });
     }
 
     public void selectImage(View view){
@@ -123,7 +187,7 @@ public class NoteActivity extends AppCompatActivity {
         }
     }
 
-    //
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == 1){
