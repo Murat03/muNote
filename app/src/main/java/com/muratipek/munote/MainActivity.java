@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+        //Inflater
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.note_options_menu, menu);
 
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intentToSignInUp = new Intent(MainActivity.this, SignInUpActivity.class);
             startActivity(intentToSignInUp);
             finish();
+        }else if(item.getItemId() == R.id.profile){
+            Intent intentToProfile = new Intent(MainActivity.this, Profile.class);
+            startActivity(intentToProfile);
         }
 
         return super.onOptionsItemSelected(item);

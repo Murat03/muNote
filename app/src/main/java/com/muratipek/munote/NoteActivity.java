@@ -55,7 +55,7 @@ public class NoteActivity extends AppCompatActivity {
     Uri imageData;
     String downloadUrl;
     String selectedTitle, selectedNote, selectedUrl;
-
+    String documentID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,22 +83,22 @@ public class NoteActivity extends AppCompatActivity {
 
         //from docs
         firebaseFirestore.collection("Notes").whereEqualTo("useremail", userEmail)
-                .whereEqualTo("title", selectedTitle).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Map<String, Object> data = document.getData();
+                .whereEqualTo("title", selectedTitle).get().addOnCompleteListener((OnCompleteListener<QuerySnapshot>) task -> {
+                    if(task.isSuccessful()){
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Map<String, Object> data = document.getData();
 
-                        titleText.setText(selectedTitle);
-                        noteText.setText((String) data.get("note"));
-                        if((String) data.get("downloadurl") != null){
-                            Picasso.get().load((String) data.get("downloadurl")).into(selectImage);
+                            System.out.println((String) document.getId());
+                            documentID = document.getId();
+
+                            titleText.setText((String) data.get("title"));
+                            noteText.setText((String) data.get("note"));
+                            if((String) data.get("downloadurl") != null){
+                                Picasso.get().load((String) data.get("downloadurl")).into(selectImage);
+                            }
                         }
                     }
-                }
-            }
-        });
+                });
     }
 
     //Button
@@ -111,47 +111,41 @@ public class NoteActivity extends AppCompatActivity {
         String userEmail = firebaseUser.getEmail();
         HashMap<String, Object> noteData = new HashMap<>();
             if (imageData != null) {
-                storageReference.child(imageName).putFile(imageData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        StorageReference storageReference = firebaseStorage.getInstance().getReference(imageName);
-                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                downloadUrl = uri.toString();
+                storageReference.child(imageName).putFile(imageData).addOnSuccessListener(taskSnapshot -> {
+                    StorageReference storageReference = firebaseStorage.getInstance().getReference(imageName);
+                    storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                        downloadUrl = uri.toString();
 
-                                String title = titleText.getText().toString();
-                                String note = noteText.getText().toString();
+                        String title = titleText.getText().toString();
+                        String note = noteText.getText().toString();
 
-                                noteData.put("useremail", userEmail);
-                                noteData.put("title", title);
-                                noteData.put("note", note);
-                                noteData.put("date", FieldValue.serverTimestamp());
-                                noteData.put("downloadurl", downloadUrl);
+                        noteData.put("useremail", userEmail);
+                        noteData.put("title", title);
+                        noteData.put("note", note);
+                        noteData.put("date", FieldValue.serverTimestamp());
+                        noteData.put("downloadurl", downloadUrl);
 
-                                firebaseFirestore.collection("Notes").add(noteData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    @Override
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        Intent intent = new Intent(NoteActivity.this, MainActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        startActivity(intent);
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
-                                        System.out.println(e.getLocalizedMessage());
-                                    }
-                                });
-                            }
-                        });
+                        if (selectedTitle != null) {
+                            firebaseFirestore.collection("Notes").document(documentID).set(noteData).addOnSuccessListener(documentReference -> {
+                                Intent intent = new Intent(NoteActivity.this, MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                                System.out.println(e.getLocalizedMessage());
+                            });
+                        } else{
+                            firebaseFirestore.collection("Notes").add(noteData).addOnSuccessListener(documentReference -> {
+                                Intent intent = new Intent(NoteActivity.this, MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                                System.out.println(e.getLocalizedMessage());
+                            });
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
-                    }
-                });
+                    });
+                }).addOnFailureListener(e -> Toast.makeText(NoteActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show());
             } else {
                 String title = titleText.getText().toString();
                 String note = noteText.getText().toString();
@@ -161,20 +155,25 @@ public class NoteActivity extends AppCompatActivity {
                 noteData.put("note", note);
                 noteData.put("date", FieldValue.serverTimestamp());
 
-                firebaseFirestore.collection("Notes").add(noteData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
+                if(selectedTitle != null){
+                    firebaseFirestore.collection("Notes").document(documentID).set(noteData).addOnSuccessListener(aVoid -> {
                         Intent intent = new Intent(NoteActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+                    }).addOnFailureListener(e -> {
                         Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
                         System.out.println(e.getLocalizedMessage());
-                    }
-                });
+                    });
+                }else {
+                    firebaseFirestore.collection("Notes").add(noteData).addOnSuccessListener(documentReference -> {
+                        Intent intent = new Intent(NoteActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                        System.out.println(e.getLocalizedMessage());
+                    });
+                }
             }
     }
 
