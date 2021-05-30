@@ -83,17 +83,16 @@ public class NoteActivity extends AppCompatActivity {
 
         //from docs
         firebaseFirestore.collection("Notes").whereEqualTo("useremail", userEmail)
-                .whereEqualTo("title", selectedTitle).get().addOnCompleteListener((OnCompleteListener<QuerySnapshot>) task -> {
+                .whereEqualTo("title", selectedTitle).get().addOnCompleteListener(task -> {
                     if(task.isSuccessful()){
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Map<String, Object> data = document.getData();
 
-                            System.out.println((String) document.getId());
                             documentID = document.getId();
 
                             titleText.setText((String) data.get("title"));
                             noteText.setText((String) data.get("note"));
-                            if((String) data.get("downloadurl") != null){
+                            if(data.get("downloadurl") != null){
                                 Picasso.get().load((String) data.get("downloadurl")).into(selectImage);
                             }
                         }
@@ -185,8 +184,6 @@ public class NoteActivity extends AppCompatActivity {
             startActivityForResult(intentToGallery, 2);
         }
     }
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == 1){
@@ -197,12 +194,10 @@ public class NoteActivity extends AppCompatActivity {
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode == 2 && resultCode == RESULT_OK && data != null){
             imageData = data.getData();
-
             try {
                 if(Build.VERSION.SDK_INT >=28){
                     ImageDecoder.Source source = ImageDecoder.createSource(this.getContentResolver(), imageData);

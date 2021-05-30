@@ -6,4 +6,137 @@
     android:layout_height="match_parent"
     tools:context=".Profile">
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profileImage"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="31dp"
+        android:onClick="profileImage"
+        android:src="@drawable/select"
+        app:civ_border_color="@color/design_default_color_primary"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/textNick"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:onClick="editSaveButton"
+        android:text="Save"
+        android:visibility="invisible"
+        app:layout_column="0"
+        app:layout_constraintBaseline_toBaselineOf="@+id/editButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_row="3" />
+
+    <EditText
+        android:id="@+id/editNick"
+        android:layout_width="200dp"
+        android:layout_height="0dp"
+        android:background="@drawable/note_shape"
+        android:drawableStart="@drawable/ic_person"
+        android:drawablePadding="5dp"
+        android:ems="10"
+        android:hint="Nickname"
+        android:inputType="textPersonName"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/textNick"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textNick" />
+
+    <EditText
+        android:id="@+id/editMail"
+        android:layout_width="200dp"
+        android:layout_height="0dp"
+        android:background="@drawable/note_shape"
+        android:drawableStart="@drawable/ic_email"
+        android:drawablePadding="5dp"
+        android:ems="10"
+        android:hint="Mail Address"
+        android:inputType="textPersonName"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/textMail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textMail" />
+
+    <EditText
+        android:id="@+id/editPass"
+        android:layout_width="200dp"
+        android:layout_height="0dp"
+        android:background="@drawable/note_shape"
+        android:drawableStart="@drawable/ic_lock"
+        android:drawablePadding="5dp"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPersonName"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/textPass"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textPass" />
+
+    <TextView
+        android:id="@+id/textNick"
+        android:layout_width="200dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="29dp"
+        android:drawableStart="@drawable/ic_person"
+        android:drawablePadding="5dp"
+        android:hint="Nickname"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/textMail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileImage" />
+
+    <TextView
+        android:id="@+id/textMail"
+        android:layout_width="200dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="31dp"
+        android:drawableStart="@drawable/ic_email"
+        android:drawablePadding="5dp"
+        android:hint="Mail Address"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/textPass"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textNick" />
+
+    <TextView
+        android:id="@+id/textPass"
+        android:layout_width="200dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="30dp"
+        android:drawableStart="@drawable/ic_lock"
+        android:drawablePadding="5dp"
+        android:hint="Password"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/editButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textMail" />
+
+    <Button
+        android:id="@+id/editButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
+        android:onClick="turnEditButton"
+        android:text="EDIT"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textPass" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
