@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,6 +48,7 @@ public class NoteActivity extends AppCompatActivity {
     Bitmap selectedImage;
     ImageView selectImage;
     EditText titleText, noteText;
+    TextView locationText;
     Button addNoteButton;
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
@@ -64,19 +66,22 @@ public class NoteActivity extends AppCompatActivity {
         selectImage = findViewById(R.id.selectImage);
         titleText = findViewById(R.id.titleText);
         noteText = findViewById(R.id.noteText);
+        locationText = findViewById(R.id.locationText);
 
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
 
+        Intent intent = getIntent();
+        selectedTitle = intent.getStringExtra("title");
+        locationText.setText(intent.getStringExtra("address"));
+
         noteSelected();
     }
 
     //When Note is Selected
     public void noteSelected(){
-        Intent intent = getIntent();
-        selectedTitle = intent.getStringExtra("title");
 
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         String userEmail = firebaseUser.getEmail();
@@ -92,12 +97,19 @@ public class NoteActivity extends AppCompatActivity {
 
                             titleText.setText((String) data.get("title"));
                             noteText.setText((String) data.get("note"));
+                            locationText.setText((String) data.get("location"));
+
                             if(data.get("downloadurl") != null){
                                 Picasso.get().load((String) data.get("downloadurl")).into(selectImage);
                             }
                         }
                     }
                 });
+    }
+
+    public void maps(View v){
+        Intent intentToMaps = new Intent(NoteActivity.this, MapsActivity.class);
+        startActivity(intentToMaps);
     }
 
     //Button
@@ -117,10 +129,12 @@ public class NoteActivity extends AppCompatActivity {
 
                         String title = titleText.getText().toString();
                         String note = noteText.getText().toString();
+                        String location = locationText.getText().toString();
 
                         noteData.put("useremail", userEmail);
                         noteData.put("title", title);
                         noteData.put("note", note);
+                        noteData.put("location", location);
                         noteData.put("date", FieldValue.serverTimestamp());
                         noteData.put("downloadurl", downloadUrl);
 
@@ -148,10 +162,12 @@ public class NoteActivity extends AppCompatActivity {
             } else {
                 String title = titleText.getText().toString();
                 String note = noteText.getText().toString();
+                String location = locationText.getText().toString();
 
                 noteData.put("useremail", userEmail);
                 noteData.put("title", title);
                 noteData.put("note", note);
+                noteData.put("location", location);
                 noteData.put("date", FieldValue.serverTimestamp());
 
                 if(selectedTitle != null){
@@ -207,7 +223,6 @@ public class NoteActivity extends AppCompatActivity {
                     selectedImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageData);
                     selectImage.setImageBitmap(selectedImage);
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
