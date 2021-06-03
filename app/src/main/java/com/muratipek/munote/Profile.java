@@ -31,6 +31,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -62,6 +63,7 @@ public class Profile extends AppCompatActivity {
     Uri imageData;
     String documentID;
     String userEmail, userPassword;
+    String nick ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,10 +99,11 @@ public class Profile extends AppCompatActivity {
                     for(QueryDocumentSnapshot document : task.getResult()){
                         Map<String, Object> data = document.getData();
                         documentID = document.getId();
+                        nick = (String) data.get("usernick");
 
                         textMail.setText((String) data.get("useremail"));
                         textPass.setText((String) data.get("userpassword"));
-                        textNick.setText((String) data.get("usernick"));
+                        textNick.setText(nick);
 
                         if(data.get("profileUrl") != null){
                             Picasso.get().load((String) data.get("profileUrl")).into(profileImage);
@@ -125,24 +128,25 @@ public class Profile extends AppCompatActivity {
                 StorageReference storageReference = firebaseStorage.getInstance().getReference(profileImageName);
                 storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
                     profileUrl = uri.toString();
+                    nick = editNick.getText().toString();
 
                     profileData.put("profileUrl", profileUrl);
-                    profileData.put("usernick", editNick.getText().toString());
-                    profileData.put("useremail", textMail.getText().toString());
+                    profileData.put("usernick", nick);
                     profileData.put("userpassword", editPass.getText().toString());
-                    firebaseFirestore.collection("Profiles").document(documentID).set(profileData).addOnSuccessListener(aVoid -> {
+                    firebaseFirestore.collection("Profiles").document(documentID).set(profileData, SetOptions.merge()).addOnSuccessListener(aVoid -> {
 
                     }).addOnFailureListener(e -> Toast.makeText(Profile.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show());
                 }).addOnFailureListener(e -> Toast.makeText(Profile.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show());
             }).addOnFailureListener(e -> Toast.makeText(Profile.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show());
         }else{
-            profileData.put("profileUrl", profileUrl);
             profileData.put("usernick", editNick.getText().toString());
             profileData.put("userpassword", editPass.getText().toString());
-            firebaseFirestore.collection("Profiles").document(documentID).set(profileData).addOnSuccessListener(aVoid -> {
+            firebaseFirestore.collection("Profiles").document(documentID).set(profileData, SetOptions.merge()).addOnSuccessListener(aVoid -> {
 
             }).addOnFailureListener(e -> Toast.makeText(Profile.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show());
         }
+        imageData = null;
+
         saveButton.setVisibility(View.INVISIBLE);
         editNick.setVisibility(View.INVISIBLE);
         editPass.setVisibility(View.INVISIBLE);

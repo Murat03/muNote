@@ -75,7 +75,6 @@ public class NoteActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         selectedTitle = intent.getStringExtra("title");
-        locationText.setText(intent.getStringExtra("address"));
 
         noteSelected();
     }
@@ -109,7 +108,7 @@ public class NoteActivity extends AppCompatActivity {
 
     public void maps(View v){
         Intent intentToMaps = new Intent(NoteActivity.this, MapsActivity.class);
-        startActivity(intentToMaps);
+        startActivityForResult(intentToMaps, 4);
     }
 
     //Button
@@ -226,6 +225,9 @@ public class NoteActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        if(requestCode == 4){
+            locationText.setText(data.toString());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

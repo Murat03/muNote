@@ -34,7 +34,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationManager locationManager;
     LocationListener locationListener;
     Location lastLocation;
-    Integer providerStatus;
+    Integer providerStatus = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,33 +98,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         try {
             List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-            if(addressList != null && addressList.size() > 0){/*
-                if(addressList.get(0).getCountryName() != null){
-                    address += addressList.get(0).getCountryName()+" ";
-                }
-                if(addressList.get(0).getAdminArea() != null){
-                    address += addressList.get(0).getAdminArea()+" ";
-                }
-                if(addressList.get(0).getSubAdminArea() != null){
-                    address += addressList.get(0).getSubAdminArea();
-                }
-                if (addressList.get(0).getSubThoroughfare() != null){
-                    address += addressList.get(0).getSubThoroughfare();
-                }*/
+            if(addressList != null && addressList.size() > 0){
+
                 if(addressList.get(0).getAddressLine(0) != null){
                     address += addressList.get(0).getAddressLine(0);
                 }
-/*
-                address += addressList.get(0).getSubThoroughfare();
-                address += addressList.get(0).getAddressLine(0);
-                address += addressList.get(0).getFeatureName();
-                */
 
             }
-            Intent intentToNote = new Intent(this, NoteActivity.class);
+            Intent intentToNote = new Intent();
             intentToNote.putExtra("address", address);
-            intentToNote.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intentToNote);
+            setResult(RESULT_OK, intentToNote);
+            finish();
         } catch (IOException e) {
             e.printStackTrace();
         }
