@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.muratipek.munote.adapter.RecyclerViewAdapter;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -37,10 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         //Inflater
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.note_options_menu, menu);
+        menuInflater.inflate(R.menu.main_options_menu, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -92,8 +92,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(error != null){
-                    Toast.makeText(MainActivity.this, error.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
-                    System.out.println(error.getLocalizedMessage().toString());
+                    Toast.makeText(MainActivity.this, error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
                 if(value != null){
                     for(DocumentSnapshot snapshot : value.getDocuments()){

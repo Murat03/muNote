@@ -1,4 +1,4 @@
-package com.muratipek.munote;
+package com.muratipek.munote.adapter;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -6,10 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.muratipek.munote.NoteActivity;
+import com.muratipek.munote.R;
 
 import java.util.ArrayList;
 

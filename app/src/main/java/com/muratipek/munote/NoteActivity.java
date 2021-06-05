@@ -15,6 +15,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -106,12 +109,33 @@ public class NoteActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.note_options_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.share_note){
+            Intent intent = new Intent(NoteActivity.this, UserListActivity.class);
+            intent.putExtra("title", titleText.getText().toString());
+            intent.putExtra("note", noteText.getText().toString());
+            intent.putExtra("address", locationText.getText().toString());
+            intent.putExtra("downloadUrl", downloadUrl);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //Maps Button
     public void maps(View v){
         Intent intentToMaps = new Intent(NoteActivity.this, MapsActivity.class);
         startActivityForResult(intentToMaps, 4);
     }
-
-    //Button
+    //Add Note Button
     public void addNoteButton(View view){
 
         UUID uuid = UUID.randomUUID();
@@ -143,7 +167,7 @@ public class NoteActivity extends AppCompatActivity {
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                             }).addOnFailureListener(e -> {
-                                Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(NoteActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                                 System.out.println(e.getLocalizedMessage());
                             });
                         } else{
@@ -152,7 +176,7 @@ public class NoteActivity extends AppCompatActivity {
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                             }).addOnFailureListener(e -> {
-                                Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(NoteActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                                 System.out.println(e.getLocalizedMessage());
                             });
                     }
@@ -175,7 +199,7 @@ public class NoteActivity extends AppCompatActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     }).addOnFailureListener(e -> {
-                        Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(NoteActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                         System.out.println(e.getLocalizedMessage());
                     });
                 }else {
@@ -184,7 +208,7 @@ public class NoteActivity extends AppCompatActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     }).addOnFailureListener(e -> {
-                        Toast.makeText(NoteActivity.this, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(NoteActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                         System.out.println(e.getLocalizedMessage());
                     });
                 }
@@ -211,6 +235,7 @@ public class NoteActivity extends AppCompatActivity {
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //Image result
         if(requestCode == 2 && resultCode == RESULT_OK && data != null){
             imageData = data.getData();
             try {
@@ -226,8 +251,9 @@ public class NoteActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        if(requestCode == 4){
-            locationText.setText(data.toString());
+        //Maps result
+        else if(requestCode == 4){
+            locationText.setText(data.getStringExtra("address"));
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
