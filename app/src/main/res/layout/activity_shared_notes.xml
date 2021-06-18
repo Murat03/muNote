@@ -6,95 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".NoteActivity">
 
-
-    <EditText
-        android:id="@+id/noteText"
-        android:layout_width="340dp"
-        android:layout_height="280dp"
-        android:layout_marginStart="35dp"
-        android:layout_marginEnd="35dp"
-        android:layout_marginBottom="15dp"
-        android:background="@drawable/note_shape"
-        android:ems="10"
-        android:gravity="top|left"
-        android:hint="Enter note"
-        android:inputType="textMultiLine"
-        android:maxLines="15"
-        app:layout_constraintBottom_toTopOf="@+id/gridLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleText" />
-
-    <EditText
-        android:id="@+id/titleText"
-        android:layout_width="340dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginEnd="35dp"
-        android:layout_marginBottom="14dp"
-        android:ems="10"
-        android:hint="Enter title"
-        android:inputType="textPersonName"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/noteText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/addNoteButton"
-        android:layout_width="191dp"
-        android:layout_height="55dp"
-        android:layout_marginBottom="35dp"
-        android:onClick="addNoteButton"
-        android:text="Add Note"
+    <ListView
+        android:id="@+id/sharedList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gridLayout" />
-
-    <androidx.gridlayout.widget.GridLayout
-        android:id="@+id/gridLayout"
-        android:layout_width="340dp"
-        android:layout_height="115dp"
-        android:layout_marginStart="35dp"
-        android:layout_marginEnd="35dp"
-        android:layout_marginBottom="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/addNoteButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/noteText">
-
-        <ImageView
-            android:id="@+id/selectImage"
-            android:layout_width="150dp"
-            android:layout_height="115dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp"
-            android:onClick="selectImage"
-            app:layout_column="1"
-            app:layout_row="0"
-            app:srcCompat="@drawable/select" />
-
-        <TextView
-            android:id="@+id/locationText"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            android:hint="Location Unknown"
-            app:layout_column="0"
-            app:layout_row="0" />
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="65dp"
-            android:onClick="maps"
-            android:text="ADD LOCATION"
-            app:layout_column="0"
-            app:layout_row="0" />
-    </androidx.gridlayout.widget.GridLayout>
-
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

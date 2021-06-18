@@ -59,8 +59,10 @@ public class NoteActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     Uri imageData;
     String downloadUrl;
-    String selectedTitle, selectedNote, selectedUrl;
+    String selectedTitle, selectedNote, selectedUrl, sharedTitle;
     String documentID;
+    String userEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,19 +77,22 @@ public class NoteActivity extends AppCompatActivity {
         storageReference = firebaseStorage.getReference();
         firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        userEmail = firebaseUser.getEmail();
 
         Intent intent = getIntent();
         selectedTitle = intent.getStringExtra("title");
-
-        noteSelected();
+        sharedTitle = intent.getStringExtra("sharedtitle");
+        System.out.println(sharedTitle);
+        if(selectedTitle != null) {
+            noteSelected();
+        }
+        if(sharedTitle != null) {
+            sharedNote();
+        }
     }
-
     //When Note is Selected
     public void noteSelected(){
-
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        String userEmail = firebaseUser.getEmail();
-
         //from docs
         firebaseFirestore.collection("Notes").whereEqualTo("useremail", userEmail)
                 .whereEqualTo("title", selectedTitle).get().addOnCompleteListener(task -> {
@@ -100,15 +105,33 @@ public class NoteActivity extends AppCompatActivity {
                             titleText.setText((String) data.get("title"));
                             noteText.setText((String) data.get("note"));
                             locationText.setText((String) data.get("location"));
+                            downloadUrl = (String) data.get("downloadurl");
 
                             if(data.get("downloadurl") != null){
-                                Picasso.get().load((String) data.get("downloadurl")).into(selectImage);
+                                Picasso.get().load(downloadUrl).into(selectImage);
                             }
                         }
                     }
                 });
     }
+    public  void sharedNote(){
+        firebaseFirestore.collection("SharedNotes")
+                .whereEqualTo("title", sharedTitle).get().addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        for (QueryDocumentSnapshot document : task.getResult()){
+                            Map<String, Object> data = document.getData();
 
+                            titleText.setText((String) data.get("title"));
+                            noteText.setText((String) data.get("note"));
+                            locationText.setText((String) data.get("address"));
+                            if(data.get("downloadUrl") != null){
+                                Picasso.get().load((String) data.get("downloadUrl")).into(selectImage);
+                            }
+                        }
+                    }
+                });
+    }
+    //Menus
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -116,7 +139,6 @@ public class NoteActivity extends AppCompatActivity {
 
         return super.onCreateOptionsMenu(menu);
     }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.share_note){
@@ -124,8 +146,26 @@ public class NoteActivity extends AppCompatActivity {
             intent.putExtra("title", titleText.getText().toString());
             intent.putExtra("note", noteText.getText().toString());
             intent.putExtra("address", locationText.getText().toString());
-            intent.putExtra("downloadUrl", downloadUrl);
-            startActivity(intent);
+
+            UUID uuid = UUID.randomUUID();
+            String imageName = "images/" + uuid + ".jpg";
+            HashMap<String, Object> urlData = new HashMap<>();
+            if(imageData != null){
+                storageReference.child(imageName).putFile(imageData).addOnSuccessListener(taskSnapshot -> {
+                    StorageReference storageReference = FirebaseStorage.getInstance().getReference(imageName);
+                    storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
+                        downloadUrl = uri.toString();
+                        intent.putExtra("downloadUrl", downloadUrl);
+                        startActivity(intent);
+                    }).addOnFailureListener(e -> Toast.makeText(NoteActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show());
+                });
+            }else if(downloadUrl != null){
+                intent.putExtra("downloadUrl", downloadUrl);
+                startActivity(intent);
+            }else{
+                startActivity(intent);
+            }
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -146,7 +186,7 @@ public class NoteActivity extends AppCompatActivity {
         HashMap<String, Object> noteData = new HashMap<>();
             if (imageData != null) {
                 storageReference.child(imageName).putFile(imageData).addOnSuccessListener(taskSnapshot -> {
-                    StorageReference storageReference = firebaseStorage.getInstance().getReference(imageName);
+                    StorageReference storageReference = FirebaseStorage.getInstance().getReference(imageName);
                     storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
                         downloadUrl = uri.toString();
 

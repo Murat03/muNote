@@ -36,14 +36,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(@NonNull RowHolder holder, int position) {
         holder.bind(noteList.get(position), colors, position);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.itemView.setOnClickListener(v -> {
 
-                Intent intent = new Intent(v.getContext(), NoteActivity.class);
-                intent.putExtra("title", noteList.get(position));
-                v.getContext().startActivity(intent);
-            }
+            Intent intent = new Intent(v.getContext(), NoteActivity.class);
+            intent.putExtra("title", noteList.get(position));
+            v.getContext().startActivity(intent);
         });
     }
 

@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
         }else if(item.getItemId() == R.id.profile){
             Intent intentToProfile = new Intent(MainActivity.this, Profile.class);
             startActivity(intentToProfile);
+        }else if(item.getItemId() == R.id.sharednotes){
+            Intent intentToSharedNotes = new Intent(MainActivity.this, SharedNotes.class);
+            startActivity(intentToSharedNotes);
         }
 
         return super.onOptionsItemSelected(item);

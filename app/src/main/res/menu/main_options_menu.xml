@@ -2,6 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/profile" android:title="Profile"></item>
     <item android:id="@+id/upload" android:title="Add Note"></item>
+    <item android:id="@+id/sharednotes" android:title="Shared Notes"></item>
     <item android:id="@+id/chronometer" android:title="Chronometer"></item>
     <item android:id="@+id/signout" android:title="Sign Out"></item>
 

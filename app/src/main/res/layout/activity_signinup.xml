@@ -8,54 +8,43 @@
 
     <EditText
         android:id="@+id/emailText"
-        android:layout_width="300dp"
+        android:layout_width="303dp"
         android:layout_height="45dp"
-        android:layout_marginStart="54dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="54dp"
         android:drawableStart="@drawable/ic_email"
         android:drawablePadding="5dp"
         android:ems="10"
         android:hint="Email Address"
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:layout_editor_absoluteX="54dp"
+        tools:layout_editor_absoluteY="120dp" />
 
     <EditText
         android:id="@+id/passwordText"
-        android:layout_width="300dp"
+        android:layout_width="303dp"
         android:layout_height="45dp"
-        android:layout_marginStart="54dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="54dp"
         android:drawableStart="@drawable/ic_lock"
         android:drawablePadding="5dp"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailText" />
+        tools:layout_editor_absoluteX="54dp"
+        tools:layout_editor_absoluteY="202dp" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="34dp"
         android:onClick="signInClicked"
         android:text="SIGN IN"
-        app:layout_constraintBaseline_toBaselineOf="@+id/button2"
-        app:layout_constraintStart_toStartOf="@+id/passwordText" />
+        tools:layout_editor_absoluteX="88dp"
+        tools:layout_editor_absoluteY="277dp" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="34dp"
         android:onClick="signUpClicked"
         android:text="SIGN UP"
-        app:layout_constraintEnd_toEndOf="@+id/passwordText"
-        app:layout_constraintTop_toBottomOf="@+id/passwordText" />
+        tools:layout_editor_absoluteX="235dp"
+        tools:layout_editor_absoluteY="276dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
